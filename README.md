@@ -1,3 +1,5 @@
+![Pub](https://img.shields.io/pub/v/action_cable)
+
 # ActionCable in Dart
 
 ActionCable is the default realtime websocket framework and protocol in Rails.
