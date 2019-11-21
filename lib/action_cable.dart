@@ -1,5 +1,3 @@
-// TODO ping mechanic
-
 // TODO
 // so at this time there's no way to
 // a) `cancel` the _listener and b) `close` the _socketChannel
