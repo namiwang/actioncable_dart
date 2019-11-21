@@ -1,0 +1,4 @@
+- callbacks on error, disconnect, ping, etc.
+- websocket wrap for both IOWebsocket and HTMLWebSocket
+- additional params when subscribing to channel
+- testing

@@ -1,0 +1,12 @@
+name: actioncable_dart
+version: 0.1.0
+description: >-
+  ActionCable client port in dart, available in web, dartVM and flutter.
+homepage: https://github.com/namiwang/actioncable_dart
+documentation: https://github.com/namiwang/actioncable_dart
+environment:
+  sdk: '>=2.0.0 <3.0.0'
+dependencies:
+  web_socket_channel: ^1.1.0
+dev_dependencies:
+  test: '>=0.6.0 <0.12.0'
