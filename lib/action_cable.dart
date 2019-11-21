@@ -136,14 +136,6 @@ class ActionCable {
     }
   }
 
-  // TODO
-  // void onError(Error error) {
-  //   print("GameContext.onError: $error");
-  // 
-  //   // cancel on error
-  //   listener.cancel();
-  // }
-
   void _send(Map payload) {
     _socketChannel.sink.add(jsonEncode(payload));
   }
