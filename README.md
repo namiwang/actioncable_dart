@@ -47,6 +47,12 @@ cable.unsubscribeToChannel(
 cable.performAction('Chat', 'send', { 'message': 'Hello' });
 ```
 
+### disconnect
+
+```dart
+cable.disconnect();
+```
+
 ## ActionCable protocol
 
 Anycable has [a great doc](https://docs.anycable.io/#/misc/action_cable_protocol) on that topic.

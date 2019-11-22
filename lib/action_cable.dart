@@ -1,9 +1,3 @@
-// TODO
-// so at this time there's no way to
-// a) `cancel` the _listener and b) `close` the _socketChannel
-// since dart lacking a `dispose` callback
-// not sure if this will cause a memory issue
-
 import 'dart:async';
 import 'dart:convert';
 import 'dart:collection';
@@ -43,6 +37,11 @@ class ActionCable {
       _onData,
       // onError: onError TODO so if give an onError, onData would not be invoked?
     );
+  }
+
+  void disconnect() {
+    _socketChannel.sink.close();
+    _listener.cancel();
   }
 
   // TODO complex channel identifier
