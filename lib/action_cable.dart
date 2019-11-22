@@ -14,13 +14,13 @@ typedef _OnConnectedFunction = void Function();
 typedef _OnChannelSubscribedFunction = void Function();
 typedef _OnChannelMessageFunction = void Function(Map message);
 
-String encodeChannelId(Map channelId) {
+String _encodeChannelId(Map channelId) {
   final orderedMap = SplayTreeMap.from(channelId);
   return jsonEncode(orderedMap);
 }
 
 String decodeChannelId(String receivedChannelId) {
-  return encodeChannelId(jsonDecode(receivedChannelId));
+  return _encodeChannelId(jsonDecode(receivedChannelId));
 }
 
 class ActionCable {
@@ -53,7 +53,7 @@ class ActionCable {
   }) {
     final channelName = name.endsWith('Channel') ? name : "${name}Channel";
     final channelId = { 'channel': channelName };
-    final encodedChannelId = encodeChannelId(channelId);
+    final encodedChannelId = _encodeChannelId(channelId);
 
     _onChannelSubscribedCallbacks[encodedChannelId] = onSubscribed;
     _onChannelMessageCallbacks[encodedChannelId] = onMessage;
@@ -69,7 +69,7 @@ class ActionCable {
   void unsubscribeToChannel(String name) {
     final channelName = name.endsWith('Channel') ? name : "${name}Channel";
     final channelId = { 'channel': channelName };
-    final encodedChannelId = encodeChannelId(channelId);
+    final encodedChannelId = _encodeChannelId(channelId);
 
     _socketChannel.sink.add(jsonEncode({
       'identifier': encodedChannelId,
@@ -82,7 +82,7 @@ class ActionCable {
   void performAction(String channelName, String action, {Map params: const {}}) {
     final actualChannelName = channelName.endsWith('Channel') ? channelName : "${channelName}Channel";
     final channelId = { 'channel': actualChannelName };
-    final encodedChannelId = encodeChannelId(channelId);
+    final encodedChannelId = _encodeChannelId(channelId);
 
     Map data = Map.from(params);
     data['action'] = action;
@@ -111,7 +111,7 @@ class ActionCable {
         if (onConnected != null) { onConnected(); }
         break;
       case 'disconnect':
-        throw 'Unimplemented';
+        // throw 'Unimplemented';
         break;
       case 'confirm_subscription':
         final channelId = decodeChannelId(payload['identifier']);
@@ -119,10 +119,10 @@ class ActionCable {
         if (onSubscribed != null) { onSubscribed(); }
         break;
       case 'reject_subscription':
-        throw 'Unimplemented';
+        // throw 'Unimplemented';
         break;
       default:
-        throw 'Invalid message';
+        throw 'InvalidMessage';
     }
   }
 
