@@ -18,7 +18,7 @@ cable = ActionCable.Connect(
   },
 
   onConnected: (){
-    // do something here
+    print('connected');
   },
 );
 ```
@@ -28,6 +28,7 @@ cable = ActionCable.Connect(
 ```dart
 cable.subscribeToChannel(
   'Chat', // either 'Chat' and 'ChatChannel' is fine
+  channelParams: { 'id': 1 },
   onSubscribed: (){}, // `confirm_subscription` received
   onMessage: (Map message) {} // any other message received
 );
@@ -44,7 +45,11 @@ cable.unsubscribeToChannel(
 ### perform action
 
 ```dart
-cable.performAction('Chat', 'send', { 'message': 'Hello' });
+cable.performAction(
+  'Chat', 'send',
+  channelParams: { 'roomId': 1 },
+  actionParams: { 'message': 'Hello' }
+);
 ```
 
 ### disconnect

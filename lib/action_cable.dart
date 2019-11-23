@@ -1,21 +1,13 @@
 import 'dart:async';
 import 'dart:convert';
-import 'dart:collection';
-// import 'package:meta/meta.dart';
+
 import 'package:web_socket_channel/io.dart';
+
+import 'channel_id.dart';
 
 typedef _OnConnectedFunction = void Function();
 typedef _OnChannelSubscribedFunction = void Function();
 typedef _OnChannelMessageFunction = void Function(Map message);
-
-String _encodeChannelId(Map channelId) {
-  final orderedMap = SplayTreeMap.from(channelId);
-  return jsonEncode(orderedMap);
-}
-
-String decodeChannelId(String receivedChannelId) {
-  return _encodeChannelId(jsonDecode(receivedChannelId));
-}
 
 class ActionCable {
   IOWebSocketChannel _socketChannel;
@@ -35,7 +27,7 @@ class ActionCable {
     _socketChannel = IOWebSocketChannel.connect( url, headers: headers );
     _listener = _socketChannel.stream.listen(
       _onData,
-      // onError: onError TODO so if give an onError, onData would not be invoked?
+      // onError: _onError TODO
     );
   }
 
@@ -44,52 +36,51 @@ class ActionCable {
     _listener.cancel();
   }
 
-  // TODO complex channel identifier
-  // assert either name or identifier is not null
-  void subscribeToChannel(String name, {
-    _OnChannelSubscribedFunction onSubscribed,
-    _OnChannelMessageFunction onMessage,
-  }) {
-    final channelName = name.endsWith('Channel') ? name : "${name}Channel";
-    final channelId = { 'channel': channelName };
-    final encodedChannelId = _encodeChannelId(channelId);
+  // channelName being 'Chat' will be considered as 'ChatChannel',
+  // 'Chat', { id: 1 } => { channel: 'ChatChannel', id: 1 }
+  void subscribeToChannel(
+    String channelName, {
+      Map channelParams,
+      _OnChannelSubscribedFunction onSubscribed,
+      _OnChannelMessageFunction onMessage
+    }
+  ) {
+    final channelId = encodeChannelId(channelName, channelParams);
 
-    _onChannelSubscribedCallbacks[encodedChannelId] = onSubscribed;
-    _onChannelMessageCallbacks[encodedChannelId] = onMessage;
+    _onChannelSubscribedCallbacks[channelId] = onSubscribed;
+    _onChannelMessageCallbacks[channelId] = onMessage;
 
     _send({
-      'identifier': encodedChannelId,
+      'identifier': channelId,
       'command': 'subscribe'
     });
   }
 
-  // TODO complex channel identifier
-  // assert either name or identifier is not null
-  void unsubscribeToChannel(String name) {
-    final channelName = name.endsWith('Channel') ? name : "${name}Channel";
-    final channelId = { 'channel': channelName };
-    final encodedChannelId = _encodeChannelId(channelId);
+  void unsubscribeToChannel(String channelName, { Map channelParams }) {
+    final channelId = encodeChannelId(channelName, channelParams);
 
     _socketChannel.sink.add(jsonEncode({
-      'identifier': encodedChannelId,
+      'identifier': channelId,
       'command': 'unsubscribe'
     }));
   }
 
-  // TODO complex channel identifier
-  // assert either name or identifier is not null
-  void performAction(String channelName, String action, {Map params: const {}}) {
-    final actualChannelName = channelName.endsWith('Channel') ? channelName : "${channelName}Channel";
-    final channelId = { 'channel': actualChannelName };
-    final encodedChannelId = _encodeChannelId(channelId);
+  void performAction(
+    String channelName,
+    String actionName, {
+      Map channelParams,
+      Map actionParams
+    }
+  ) {
+    final channelId = encodeChannelId(channelName, channelParams);
 
-    Map data = Map.from(params);
-    data['action'] = action;
+    actionParams ??= {};
+    actionParams['action'] = actionName;
 
     _send({
-      'identifier': encodedChannelId,
+      'identifier': channelId,
       'command': 'message',
-      'data': jsonEncode(data)
+      'data': jsonEncode(actionParams)
     });
   }
 
