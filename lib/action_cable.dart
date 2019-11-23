@@ -59,6 +59,9 @@ class ActionCable {
   void unsubscribeToChannel(String channelName, { Map channelParams }) {
     final channelId = encodeChannelId(channelName, channelParams);
 
+    _onChannelSubscribedCallbacks[channelId] = null;
+    _onChannelMessageCallbacks[channelId] = null;
+
     _socketChannel.sink.add(jsonEncode({
       'identifier': channelId,
       'command': 'unsubscribe'
