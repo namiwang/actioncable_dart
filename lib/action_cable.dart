@@ -107,7 +107,7 @@ class ActionCable {
         // throw 'Unimplemented';
         break;
       case 'confirm_subscription':
-        final channelId = decodeChannelId(payload['identifier']);
+        final channelId = parseChannelId(payload['identifier']);
         final onSubscribed = _onChannelSubscribedCallbacks[channelId];
         if (onSubscribed != null) { onSubscribed(); }
         break;
@@ -120,7 +120,7 @@ class ActionCable {
   }
 
   void _handleDataMsg(Map payload) {
-    final channelId = decodeChannelId(payload['identifier']);
+    final channelId = parseChannelId(payload['identifier']);
     final onMessage = _onChannelMessageCallbacks[channelId];
     if (onMessage != null) {
       onMessage(payload['message']);
