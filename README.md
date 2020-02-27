@@ -4,55 +4,59 @@
 
 ActionCable is the default realtime websocket framework and protocol in Rails.
 
-This is a dart port of the client and protocol implementation, which is available in web, dartVM and flutter.
+This is a dart port of the client and protocol implementation which is available in web, dartVM and flutter.
 
 ## Usage
 
-### connect
+### Connecting to a channel 🙌
 
 ```dart
 cable = ActionCable.Connect(
-  'ws://10.0.2.2:3000/cable',
+  "ws://10.0.2.2:3000/cable",
   headers: {
-    'Authorization': 'Some Token',
+    "Authorization": "Some Token",
   },
-
   onConnected: (){
-    print('connected');
+    print("connected");
   },
 );
 ```
 
-### subscribe to channel
+### Subscribing to channel 🎉
 
 ```dart
-cable.subscribeToChannel(
-  'Chat', // either 'Chat' and 'ChatChannel' is fine
-  channelParams: { 'id': 1 },
+cable.subscribe(
+  "Chat", // either "Chat" and "ChatChannel" is fine
+  channelParams: { "room": "private" },
   onSubscribed: (){}, // `confirm_subscription` received
+  onDisconnected: (){} // `disconnect` received
   onMessage: (Map message) {} // any other message received
 );
 ```
 
-### unsubscribe to channel
+### Unsubscribing from a channel 🎃
 
 ```dart
-cable.unsubscribeToChannel(
-  'Chat', // either 'Chat' and 'ChatChannel' is fine
+cable.unsubscribe(
+  "Chat", // either "Chat" and "ChatChannel" is fine
+  {"room": "private"}
 );
 ```
 
-### perform action
+### Perform an action on your ActionCable server 🎇
+
+Requires that you have a method defined in your Rails Action Cable channel whose name matches the action property passed in.
 
 ```dart
 cable.performAction(
-  'Chat', 'send',
-  channelParams: { 'roomId': 1 },
-  actionParams: { 'message': 'Hello' }
+  "Chat",
+  action: "send_message",
+  channelParams: { "room": "private" },
+  actionParams: { "message": "Hello private peeps! 😜" }
 );
 ```
 
-### disconnect
+### Disconnect from the ActionCable server
 
 ```dart
 cable.disconnect();

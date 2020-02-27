@@ -36,7 +36,7 @@ class ActionCable {
 
   // channelName being 'Chat' will be considered as 'ChatChannel',
   // 'Chat', { id: 1 } => { channel: 'ChatChannel', id: 1 }
-  void subscribeToChannel(String channelName,
+  void subscribe(String channelName,
       {Map channelParams,
       _OnChannelSubscribedFunction onSubscribed,
       _OnChannelDisconnectedFunction onDisconnected,
@@ -50,7 +50,7 @@ class ActionCable {
     _send({'identifier': channelId, 'command': 'subscribe'});
   }
 
-  void unsubscribeToChannel(String channelName, {Map channelParams}) {
+  void unsubscribe(String channelName, {Map channelParams}) {
     final channelId = encodeChannelId(channelName, channelParams);
 
     _onChannelSubscribedCallbacks[channelId] = null;
@@ -61,12 +61,12 @@ class ActionCable {
         .add(jsonEncode({'identifier': channelId, 'command': 'unsubscribe'}));
   }
 
-  void performAction(String channelName, String actionName,
-      {Map channelParams, Map actionParams}) {
+  void performAction(String channelName,
+      {String action, Map channelParams, Map actionParams}) {
     final channelId = encodeChannelId(channelName, channelParams);
 
     actionParams ??= {};
-    actionParams['action'] = actionName;
+    actionParams['action'] = action;
 
     _send({
       'identifier': channelId,
