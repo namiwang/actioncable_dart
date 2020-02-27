@@ -6,8 +6,7 @@
 // - "{id: \"1\", \"channel\": \"ChatChannel\"}"    // different order
 // - "{\"channel\":    \"ChatChannel\", id: \"1\"}" // additional spaces
 // 
-// Currently, we achive that by encoding params Map into a SplayTreeMap before stringify.
-// 
+// Currently, we achieve that by encoding params Map into a SplayTreeMap before stringifying.
 
 import 'dart:collection';
 import 'dart:convert';
