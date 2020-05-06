@@ -1,0 +1,14 @@
+# https://dart.dev/guides/libraries/private-files
+/.dart_tool/
+/.packages
+/build/
+/pubspec.lock  # Except for application packages
+
+# IntelliJ
+*.iml
+*.ipr
+*.iws
+.idea/
+
+# Mac
+.DS_Store
