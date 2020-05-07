@@ -1,0 +1,25 @@
+{
+  "files": [
+    "README.md"
+  ],
+  "imageSize": 100,
+  "commit": false,
+  "contributors": [
+    {
+      "login": "mclintprojects",
+      "name": "Clinton",
+      "avatar_url": "https://avatars1.githubusercontent.com/u/18232142?v=4",
+      "profile": "https://clintonmbah.com",
+      "contributions": [
+        "code",
+        "test"
+      ]
+    }
+  ],
+  "contributorsPerLine": 7,
+  "projectName": "actioncable_dart",
+  "projectOwner": "namiwang",
+  "repoType": "github",
+  "repoHost": "https://github.com",
+  "skipCi": true
+}
