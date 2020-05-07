@@ -4,7 +4,6 @@ description: >-
   ActionCable client port in dart, available in web, dartVM and flutter.
 homepage: https://github.com/namiwang/actioncable_dart
 documentation: https://github.com/namiwang/actioncable_dart
-author: Nami WANG <namiheike@gmail.com>
 environment:
   sdk: '>=2.0.0 <3.0.0'
 dependencies:
