@@ -1,6 +1,8 @@
 import 'dart:async';
 import 'dart:convert';
+
 import 'package:web_socket_channel/io.dart';
+
 import 'channel_id.dart';
 
 typedef _OnConnectedFunction = void Function();
@@ -11,8 +13,8 @@ typedef _OnChannelDisconnectedFunction = void Function();
 typedef _OnChannelMessageFunction = void Function(Map message);
 
 class ActionCable {
-  DateTime lastPing;
-  Timer timer;
+  DateTime _lastPing;
+  Timer _timer;
   IOWebSocketChannel _socketChannel;
   StreamSubscription _listener;
   _OnConnectedFunction onConnected;
@@ -31,34 +33,30 @@ class ActionCable {
     this.onCannotConnect,
   }) {
     // rails gets a ping every 3 seconds
-    _socketChannel = IOWebSocketChannel.connect(url, headers: headers,
-        pingInterval: Duration(seconds: 3));
-    _listener = _socketChannel.stream.listen(
-        _onData,
-        onError: (_) {
-          this.disconnect(); // close a socket and the timer
-          this.onCannotConnect();
-        }
-    );
-    timer =  Timer.periodic(const Duration(seconds: 3), healthCheck);
+    _socketChannel = IOWebSocketChannel.connect(url,
+        headers: headers, pingInterval: Duration(seconds: 3));
+    _listener = _socketChannel.stream.listen(_onData, onError: (_) {
+      this.disconnect(); // close a socket and the timer
+      this.onCannotConnect();
+    });
+    _timer = Timer.periodic(const Duration(seconds: 3), healthCheck);
   }
 
   void disconnect() {
-    timer.cancel();
+    _timer.cancel();
     _socketChannel.sink.close();
     _listener.cancel();
   }
 
   // check if there is no ping for 3 seconds and signal a [onConnectionLost] if
   // there is no ping for more than 6 seconds
-  void healthCheck(_){
-    if(lastPing == null) {
+  void healthCheck(_) {
+    if (_lastPing == null) {
       return;
     }
-    if(DateTime.now().difference(lastPing) > Duration(seconds: 6)) {
+    if (DateTime.now().difference(_lastPing) > Duration(seconds: 6)) {
       this.disconnect();
-      if(this.onConnectionLost != null)
-        this.onConnectionLost();
+      if (this.onConnectionLost != null) this.onConnectionLost();
     }
   }
 
@@ -117,7 +115,8 @@ class ActionCable {
     switch (payload['type']) {
       case 'ping':
         // rails sends epoch as seconds not miliseconds
-        lastPing = DateTime.fromMillisecondsSinceEpoch(payload['message'] * 1000);
+        _lastPing =
+            DateTime.fromMillisecondsSinceEpoch(payload['message'] * 1000);
         break;
       case 'welcome':
         if (onConnected != null) {
