@@ -8,6 +8,6 @@ Major update.
 
 - handles disconnecting
 
-# 2020-05-07 1.1.0
+# 2020-07-01 1.1.0
 
 - onConnectionLost and onCannotConnect
