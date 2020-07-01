@@ -1,6 +1,6 @@
 ![Pub](https://img.shields.io/pub/v/action_cable)
 <!-- ALL-CONTRIBUTORS-BADGE:START - Do not remove or modify this section -->
-[![All Contributors](https://img.shields.io/badge/all_contributors-1-orange.svg?style=flat-square)](#contributors-)
+[![All Contributors](https://img.shields.io/badge/all_contributors-2-orange.svg?style=flat-square)](#contributors-)
 <!-- ALL-CONTRIBUTORS-BADGE:END -->
 
 # ActionCable in Dart
@@ -84,6 +84,7 @@ Thanks goes to these wonderful people ([emoji key](https://allcontributors.org/d
 <table>
   <tr>
     <td align="center"><a href="https://clintonmbah.com"><img src="https://avatars1.githubusercontent.com/u/18232142?v=4" width="100px;" alt=""/><br /><sub><b>Clinton</b></sub></a><br /><a href="https://github.com/namiwang/actioncable_dart/commits?author=mclintprojects" title="Code">💻</a> <a href="https://github.com/namiwang/actioncable_dart/commits?author=mclintprojects" title="Tests">⚠️</a></td>
+    <td align="center"><a href="http://www.hamadalghanim.com"><img src="https://avatars0.githubusercontent.com/u/6298868?v=4" width="100px;" alt=""/><br /><sub><b>Hamad AlGhanim</b></sub></a><br /><a href="https://github.com/namiwang/actioncable_dart/commits?author=Dreamersoul" title="Code">💻</a></td>
   </tr>
 </table>
 
