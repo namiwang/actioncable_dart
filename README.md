@@ -21,8 +21,13 @@ cable = ActionCable.Connect(
   },
   onConnected: (){
     print("connected");
-  },
-);
+  }, 
+  onConnectionLost: () {
+    print("connection lost");
+  }, 
+  onCannotConnect: () {
+    print("cannot connect");
+});
 ```
 
 ### Subscribing to channel 🎉

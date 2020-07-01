@@ -1,3 +1,2 @@
-- callbacks on error, disconnect, ping, etc.
 - websocket wrap for both IOWebsocket and HTMLWebSocket
 - testing
