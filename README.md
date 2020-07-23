@@ -37,7 +37,7 @@ cable.subscribe(
   "Chat", // either "Chat" and "ChatChannel" is fine
   channelParams: { "room": "private" },
   onSubscribed: (){}, // `confirm_subscription` received
-  onDisconnected: (){} // `disconnect` received
+  onDisconnected: (){}, // `disconnect` received
   onMessage: (Map message) {} // any other message received
 );
 ```
