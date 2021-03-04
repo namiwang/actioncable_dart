@@ -13,17 +13,17 @@ typedef _OnChannelDisconnectedFunction = void Function();
 typedef _OnChannelMessageFunction = void Function(Map message);
 
 class ActionCable {
-  DateTime _lastPing;
-  Timer _timer;
-  IOWebSocketChannel _socketChannel;
-  StreamSubscription _listener;
-  _OnConnectedFunction onConnected;
-  _OnCannotConnectFunction onCannotConnect;
-  _OnConnectionLostFunction onConnectionLost;
-  Map<String, _OnChannelSubscribedFunction> _onChannelSubscribedCallbacks = {};
-  Map<String, _OnChannelDisconnectedFunction> _onChannelDisconnectedCallbacks =
+  DateTime? _lastPing;
+  late Timer _timer;
+  late IOWebSocketChannel _socketChannel;
+  late StreamSubscription _listener;
+  _OnConnectedFunction? onConnected;
+  _OnCannotConnectFunction? onCannotConnect;
+  _OnConnectionLostFunction? onConnectionLost;
+  Map<String, _OnChannelSubscribedFunction?> _onChannelSubscribedCallbacks = {};
+  Map<String, _OnChannelDisconnectedFunction?> _onChannelDisconnectedCallbacks =
       {};
-  Map<String, _OnChannelMessageFunction> _onChannelMessageCallbacks = {};
+  Map<String, _OnChannelMessageFunction?> _onChannelMessageCallbacks = {};
 
   ActionCable.Connect(
     String url, {
@@ -37,7 +37,7 @@ class ActionCable {
         headers: headers, pingInterval: Duration(seconds: 3));
     _listener = _socketChannel.stream.listen(_onData, onError: (_) {
       this.disconnect(); // close a socket and the timer
-      this.onCannotConnect();
+      if (this.onCannotConnect != null) this.onCannotConnect!();
     });
     _timer = Timer.periodic(const Duration(seconds: 3), healthCheck);
   }
@@ -54,19 +54,19 @@ class ActionCable {
     if (_lastPing == null) {
       return;
     }
-    if (DateTime.now().difference(_lastPing) > Duration(seconds: 6)) {
+    if (DateTime.now().difference(_lastPing!) > Duration(seconds: 6)) {
       this.disconnect();
-      if (this.onConnectionLost != null) this.onConnectionLost();
+      if (this.onConnectionLost != null) this.onConnectionLost!();
     }
   }
 
   // channelName being 'Chat' will be considered as 'ChatChannel',
   // 'Chat', { id: 1 } => { channel: 'ChatChannel', id: 1 }
   void subscribe(String channelName,
-      {Map channelParams,
-      _OnChannelSubscribedFunction onSubscribed,
-      _OnChannelDisconnectedFunction onDisconnected,
-      _OnChannelMessageFunction onMessage}) {
+      {Map? channelParams,
+      _OnChannelSubscribedFunction? onSubscribed,
+      _OnChannelDisconnectedFunction? onDisconnected,
+      _OnChannelMessageFunction? onMessage}) {
     final channelId = encodeChannelId(channelName, channelParams);
 
     _onChannelSubscribedCallbacks[channelId] = onSubscribed;
@@ -76,7 +76,7 @@ class ActionCable {
     _send({'identifier': channelId, 'command': 'subscribe'});
   }
 
-  void unsubscribe(String channelName, {Map channelParams}) {
+  void unsubscribe(String channelName, {Map? channelParams}) {
     final channelId = encodeChannelId(channelName, channelParams);
 
     _onChannelSubscribedCallbacks[channelId] = null;
@@ -88,7 +88,7 @@ class ActionCable {
   }
 
   void performAction(String channelName,
-      {String action, Map channelParams, Map actionParams}) {
+      {String? action, Map? channelParams, Map? actionParams}) {
     final channelId = encodeChannelId(channelName, channelParams);
 
     actionParams ??= {};
@@ -120,7 +120,7 @@ class ActionCable {
         break;
       case 'welcome':
         if (onConnected != null) {
-          onConnected();
+          onConnected!();
         }
         break;
       case 'disconnect':

@@ -5,8 +5,8 @@ description: >-
 homepage: https://github.com/namiwang/actioncable_dart
 documentation: https://github.com/namiwang/actioncable_dart
 environment:
-  sdk: '>=2.0.0 <3.0.0'
+  sdk: '>=2.12.0-0 <3.0.0'
 dependencies:
-  web_socket_channel: ^1.1.0
+  web_socket_channel: ^2.0.0
 dev_dependencies:
   test:
