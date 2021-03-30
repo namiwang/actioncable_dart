@@ -11,7 +11,7 @@
 import 'dart:collection';
 import 'dart:convert';
 
-String encodeChannelId(String channelName, Map channelParams) {
+String encodeChannelId(String channelName, Map? channelParams) {
   final fullChannelName =
       channelName.endsWith('Channel') ? channelName : "${channelName}Channel";
 
