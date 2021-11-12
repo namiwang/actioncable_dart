@@ -46,6 +46,11 @@ class ActionCable {
     _timer.cancel();
     _socketChannel.sink.close();
     _listener.cancel();
+    _onChannelDisconnectedCallbacks.values
+      .where((onDisconnected) => onDisconnected != null)
+      .forEach((onDisconnected) {
+        onDisconnected!();
+      });
   }
 
   // check if there is no ping for 3 seconds and signal a [onConnectionLost] if
