@@ -21,8 +21,7 @@ class ActionCable {
   _OnCannotConnectFunction onCannotConnect;
   _OnConnectionLostFunction onConnectionLost;
   Map<String, _OnChannelSubscribedFunction> _onChannelSubscribedCallbacks = {};
-  Map<String, _OnChannelDisconnectedFunction> _onChannelDisconnectedCallbacks =
-      {};
+  Map<String, _OnChannelDisconnectedFunction> _onChannelDisconnectedCallbacks = {};
   Map<String, _OnChannelMessageFunction> _onChannelMessageCallbacks = {};
 
   ActionCable.Connect(
@@ -33,17 +32,16 @@ class ActionCable {
     this.onCannotConnect,
   }) {
     // rails gets a ping every 3 seconds
-    _socketChannel = IOWebSocketChannel.connect(url,
-        headers: headers, pingInterval: Duration(seconds: 3));
+    _socketChannel = IOWebSocketChannel.connect(url, headers: headers);
     _listener = _socketChannel.stream.listen(_onData, onError: (_) {
       this.disconnect(); // close a socket and the timer
       this.onCannotConnect();
     });
-    _timer = Timer.periodic(const Duration(seconds: 3), healthCheck);
+    // _timer = Timer.periodic(const Duration(seconds: 3), healthCheck);
   }
 
   void disconnect() {
-    _timer.cancel();
+    _timer?.cancel();
     _socketChannel.sink.close();
     _listener.cancel();
   }
@@ -83,22 +81,16 @@ class ActionCable {
     _onChannelDisconnectedCallbacks[channelId] = null;
     _onChannelMessageCallbacks[channelId] = null;
 
-    _socketChannel.sink
-        .add(jsonEncode({'identifier': channelId, 'command': 'unsubscribe'}));
+    _socketChannel.sink.add(jsonEncode({'identifier': channelId, 'command': 'unsubscribe'}));
   }
 
-  void performAction(String channelName,
-      {String action, Map channelParams, Map actionParams}) {
+  void performAction(String channelName, {String action, Map channelParams, Map actionParams}) {
     final channelId = encodeChannelId(channelName, channelParams);
 
     actionParams ??= {};
     actionParams['action'] = action;
 
-    _send({
-      'identifier': channelId,
-      'command': 'message',
-      'data': jsonEncode(actionParams)
-    });
+    _send({'identifier': channelId, 'command': 'message', 'data': jsonEncode(actionParams)});
   }
 
   void _onData(dynamic payload) {
@@ -115,8 +107,7 @@ class ActionCable {
     switch (payload['type']) {
       case 'ping':
         // rails sends epoch as seconds not miliseconds
-        _lastPing =
-            DateTime.fromMillisecondsSinceEpoch(payload['message'] * 1000);
+        _lastPing = DateTime.fromMillisecondsSinceEpoch(payload['message'] * 1000);
         break;
       case 'welcome':
         if (onConnected != null) {
