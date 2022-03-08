@@ -15,6 +15,8 @@ typedef _OnChannelMessageFunction = void Function(Map message);
 class ActionCable {
   DateTime _lastPing;
   Timer _timer;
+  Duration timeoutAfter;
+  Duration healthCheckDuration;
   IOWebSocketChannel _socketChannel;
   StreamSubscription _listener;
   _OnConnectedFunction onConnected;
@@ -24,20 +26,25 @@ class ActionCable {
   Map<String, _OnChannelDisconnectedFunction> _onChannelDisconnectedCallbacks = {};
   Map<String, _OnChannelMessageFunction> _onChannelMessageCallbacks = {};
 
-  ActionCable.Connect(
+  ActionCable.connect(
     String url, {
     Map<String, String> headers: const {},
+    this.healthCheckDuration,
+    this.timeoutAfter,
     this.onConnected,
     this.onConnectionLost,
     this.onCannotConnect,
   }) {
     // rails gets a ping every 3 seconds
-    _socketChannel = IOWebSocketChannel.connect(url, headers: headers);
+    _socketChannel =
+        IOWebSocketChannel.connect(url, headers: headers, pingInterval: Duration(seconds: 3));
     _listener = _socketChannel.stream.listen(_onData, onError: (_) {
       this.disconnect(); // close a socket and the timer
       this.onCannotConnect();
     });
-    // _timer = Timer.periodic(const Duration(seconds: 3), healthCheck);
+    if (healthCheckDuration != null) {
+      _timer = Timer.periodic(healthCheckDuration ?? const Duration(seconds: 3), healthCheck);
+    }
   }
 
   void disconnect() {
@@ -52,7 +59,7 @@ class ActionCable {
     if (_lastPing == null) {
       return;
     }
-    if (DateTime.now().difference(_lastPing) > Duration(seconds: 6)) {
+    if (DateTime.now().difference(_lastPing) > (timeoutAfter ?? const Duration(seconds: 6))) {
       this.disconnect();
       if (this.onConnectionLost != null) this.onConnectionLost();
     }
