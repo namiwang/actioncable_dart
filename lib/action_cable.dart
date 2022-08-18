@@ -67,13 +67,17 @@ class ActionCable {
       _OnChannelSubscribedFunction? onSubscribed,
       _OnChannelDisconnectedFunction? onDisconnected,
       _OnChannelMessageFunction? onMessage}) {
-    final channelId = encodeChannelId(channelName, channelParams);
+    final channelId = encodeChannelId(channelName, null);
 
     _onChannelSubscribedCallbacks[channelId] = onSubscribed;
     _onChannelDisconnectedCallbacks[channelId] = onDisconnected;
     _onChannelMessageCallbacks[channelId] = onMessage;
 
-    _send({'identifier': channelId, 'command': 'subscribe'});
+    _send({
+      'identifier': channelId,
+      'command': 'subscribe',
+      'data': jsonEncode(channelParams)
+    });
   }
 
   void unsubscribe(String channelName, {Map? channelParams}) {
@@ -115,8 +119,7 @@ class ActionCable {
     switch (payload['type']) {
       case 'ping':
         // rails sends epoch as seconds not miliseconds
-        _lastPing =
-            DateTime.now();
+        _lastPing = DateTime.now();
         break;
       case 'welcome':
         if (onConnected != null) {
