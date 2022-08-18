@@ -1,5 +1,6 @@
 import 'dart:async';
 import 'dart:convert';
+import 'dart:developer';
 
 import 'package:web_socket_channel/io.dart';
 
@@ -15,6 +16,7 @@ typedef _OnChannelMessageFunction = void Function(Map message);
 class ActionCable {
   DateTime? _lastPing;
   late Timer _timer;
+
   late IOWebSocketChannel _socketChannel;
   late StreamSubscription _listener;
   _OnConnectedFunction? onConnected;
@@ -27,6 +29,7 @@ class ActionCable {
 
   ActionCable.Connect(
     String url, {
+    bool showLogs = false,
     Map<String, String> headers: const {},
     this.onConnected,
     this.onConnectionLost,
@@ -36,10 +39,13 @@ class ActionCable {
     _socketChannel = IOWebSocketChannel.connect(url,
         headers: headers, pingInterval: Duration(seconds: 3));
     _listener = _socketChannel.stream.listen(_onData, onError: (_) {
+      if (showLogs) log("Connection lost due to error");
       this.disconnect(); // close a socket and the timer
       if (this.onCannotConnect != null) this.onCannotConnect!();
     });
-    _timer = Timer.periodic(const Duration(seconds: 3), healthCheck);
+    _timer = Timer.periodic(const Duration(seconds: 3), (_) {
+      healthCheck(showLogs);
+    });
   }
 
   void disconnect() {
@@ -50,11 +56,13 @@ class ActionCable {
 
   // check if there is no ping for 3 seconds and signal a [onConnectionLost] if
   // there is no ping for more than 6 seconds
-  void healthCheck(_) {
+  void healthCheck(bool showLogs) {
     if (_lastPing == null) {
       return;
     }
     if (DateTime.now().difference(_lastPing!) > Duration(seconds: 6)) {
+      if (showLogs)
+        log("Ping difference ${DateTime.now().difference(_lastPing!)}\nConnection lost due to ping");
       this.disconnect();
       if (this.onConnectionLost != null) this.onConnectionLost!();
     }
@@ -62,16 +70,20 @@ class ActionCable {
 
   // channelName being 'Chat' will be considered as 'ChatChannel',
   // 'Chat', { id: 1 } => { channel: 'ChatChannel', id: 1 }
-  void subscribe(String channelName,
-      {Map? channelParams,
-      _OnChannelSubscribedFunction? onSubscribed,
-      _OnChannelDisconnectedFunction? onDisconnected,
-      _OnChannelMessageFunction? onMessage}) {
+  void subscribe(
+    String channelName, {
+    Map? channelParams,
+    bool showLogs = false,
+    _OnChannelSubscribedFunction? onSubscribed,
+    _OnChannelDisconnectedFunction? onDisconnected,
+    _OnChannelMessageFunction? onMessage,
+  }) {
     final channelId = encodeChannelId(channelName, null);
 
     _onChannelSubscribedCallbacks[channelId] = onSubscribed;
     _onChannelDisconnectedCallbacks[channelId] = onDisconnected;
     _onChannelMessageCallbacks[channelId] = onMessage;
+    if (showLogs) log("Connecting to channel $channelId");
 
     _send({
       'identifier': channelId,
@@ -91,13 +103,18 @@ class ActionCable {
         .add(jsonEncode({'identifier': channelId, 'command': 'unsubscribe'}));
   }
 
-  void performAction(String channelName,
-      {String? action, Map? channelParams, Map? actionParams}) {
+  void performAction(
+    String channelName, {
+    String? action,
+    Map? channelParams,
+    Map? actionParams,
+    bool showLogs = false,
+  }) {
     final channelId = encodeChannelId(channelName, channelParams);
 
     actionParams ??= {};
     actionParams['action'] = action;
-
+    if (showLogs) log("Performing $action on $channelId");
     _send({
       'identifier': channelId,
       'command': 'message',
