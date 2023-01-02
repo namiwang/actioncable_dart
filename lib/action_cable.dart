@@ -124,17 +124,21 @@ class ActionCable {
         }
         break;
       case 'disconnect':
-        final channelId = parseChannelId(payload['identifier']);
-        final onDisconnected = _onChannelDisconnectedCallbacks[channelId];
-        if (onDisconnected != null) {
-          onDisconnected();
+        if(payload['identifier'] != null){
+          final channelId = parseChannelId(payload['identifier']);
+          final onDisconnected = _onChannelDisconnectedCallbacks[channelId];
+          if (onDisconnected != null) {
+            onDisconnected();
+          }
         }
         break;
       case 'confirm_subscription':
-        final channelId = parseChannelId(payload['identifier']);
-        final onSubscribed = _onChannelSubscribedCallbacks[channelId];
-        if (onSubscribed != null) {
-          onSubscribed();
+        if(payload['identifier'] != null) {
+          final channelId = parseChannelId(payload['identifier']);
+          final onSubscribed = _onChannelSubscribedCallbacks[channelId];
+          if (onSubscribed != null) {
+            onSubscribed();
+          }
         }
         break;
       case 'reject_subscription':
