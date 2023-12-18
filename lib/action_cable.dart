@@ -149,7 +149,7 @@ class ActionCable {
     final channelId = parseChannelId(payload['identifier']);
     final onMessage = _onChannelMessageCallbacks[channelId];
     if (onMessage != null) {
-      onMessage(payload['message']);
+      onMessage(payload);
     }
   }
 
