@@ -61,6 +61,11 @@ class ActionCable {
     _listener?.cancel();
     _socketChannel?.sink.close();
     _socketChannel = null;
+    _onChannelDisconnectedCallbacks.values
+        .where((onDisconnected) => onDisconnected != null)
+        .forEach((onDisconnected) {
+      onDisconnected!();
+    });
   }
 
   void _handleError() {
