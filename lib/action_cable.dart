@@ -154,8 +154,17 @@ class ActionCable {
         onConnected?.call();
         break;
       case 'disconnect':
-        final channelId = parseChannelId(payload['identifier']);
-        _onChannelDisconnectedCallbacks[channelId]?.call();
+        final identifier = payload['identifier'];
+        if (identifier != null) {
+          final channelId = parseChannelId(payload['identifier']);
+          final onDisconnected = _onChannelDisconnectedCallbacks[channelId];
+          onDisconnected?.call();
+        } else {
+          final reason = payload['reason'];
+          if (reason != null && reason == 'unauthorized') {
+            this.onCannotConnect?.call();
+          }
+        }
         break;
       case 'confirm_subscription':
         final channelId = parseChannelId(payload['identifier']);
