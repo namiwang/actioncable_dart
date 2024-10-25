@@ -16,3 +16,14 @@ Major update.
 
 - null safety
 - updated dependencies
+
+# 2021-04-01 1.2.1
+
+### Breaking Changes
+
+- change connect function from `ActionCable.Connect` to `ActionCable.connect`
+
+### Updates
+
+- updated websocket dependency
+- improve readability of the core code by leveraging dart's null safety

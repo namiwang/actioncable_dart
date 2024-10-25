@@ -1,6 +1,9 @@
 ![Pub](https://img.shields.io/pub/v/action_cable)
+
 <!-- ALL-CONTRIBUTORS-BADGE:START - Do not remove or modify this section -->
+
 [![All Contributors](https://img.shields.io/badge/all_contributors-3-orange.svg?style=flat-square)](#contributors-)
+
 <!-- ALL-CONTRIBUTORS-BADGE:END -->
 
 # ActionCable in Dart
@@ -14,17 +17,17 @@ This is a dart port of the client and protocol implementation which is available
 ### Connecting to a channel 🙌
 
 ```dart
-cable = ActionCable.Connect(
+cable = ActionCable.connect(
   "ws://10.0.2.2:3000/cable",
   headers: {
     "Authorization": "Some Token",
   },
   onConnected: (){
     print("connected");
-  }, 
+  },
   onConnectionLost: () {
     print("connection lost");
-  }, 
+  },
   onCannotConnect: () {
     print("cannot connect");
 });
