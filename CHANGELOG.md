@@ -17,7 +17,7 @@ Major update.
 - null safety
 - updated dependencies
 
-# 2021-04-01 1.2.1
+# 2024-10-25 1.3.0
 
 ### Breaking Changes
 
@@ -25,5 +25,6 @@ Major update.
 
 ### Updates
 
+- support for dart 3
 - updated websocket dependency
 - improve readability of the core code by leveraging dart's null safety
